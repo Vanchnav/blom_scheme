@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h3>1. Генерация схемы предварительного распределения ключей</h3>
+    <form name="Gen" style="position: relative">
+        <p>p:
+            <input type="text" size="25" style="margin-left:5px">
+        </p>
+        <p>k:
+            <input type="text" size="25" style="margin-left:5px">
+        </p>
+        <p>m:
+            <input type="text" size="25" style="margin-left:2px">
+        </p>
+        <p>
+            Исходный многочлен:
+        </p>
+        <div style="overflow: auto; width:300px; height:100px; border: 1px solid black; position: relative">[61, 77, 49, 74, 69, 107, 59, 68, 105, 121, 113, 111, 30, 62, 31, 122, 42, 40, 29, 64, 91, 74, 78, 5, 72, 92, 126, 61, 38, 32, 102, 50, 48, 80, 124]</div><br>
+        <input type="submit" name="generate" value="Генерировать">
+    </form>
+    <h3>2. Вычисление ключа конференц-связи</h3>
+    <form name="Calcul" style="position: relative">
+        <p>Индентификаторы участников конференц-связи:<br><br>
+            <input type="text" size="25" style="margin-left:5px">
+        </p>
+        <p>Вычисление ключа
+            <input type="text" size="1" style="margin-left:5px; margin-right:5px">участником
+        </p>
+        <div style="overflow: auto; width:300px; height:100px; border: 1px solid black; position: relative">Предварительный ключ участника: [114, 99, 105, 56, 90, 63, 76, 45, 51, 104, 72, 93, 67, 48, 88, 79, 86, 111, 48, 43]<br>prekey [53, 100, 112, 121]<br>Ключ = 83</div>
+        <p>Вычисление ключа
+            <input type="text" size="1" style="margin-left:5px; margin-right:5px">участником
+        </p>
+        <div style="overflow: auto; width:300px; height:100px; border: 1px solid black; position: relative">Предварительный ключ участника: [7, 58, 75, 105, 69, 57, 115, 85, 78, 82, 102, 8, 18, 0, 75, 30, 66, 72, 68, 46]<br>prekey [53, 100, 112, 121]<br>Ключ = 83</div><br>
+        <input type="submit" name="calculate" value="Вычислить">
+        <div style="overflow: auto; width:300px; height:20px; border: 1px solid black; position: relative; margin-top:15px">Совпадение ключей: True</div><br>
+    </form>
+    <h3>3. Вскрытие схемы Блома</h3>
+    <form name="Open" style="position: relative">
+        <p>p:
+            <input type="text" size="25" style="margin-left:5px">
+        </p>
+        <p>Список индентификаторов
+            <input type="text" size="10" style="margin-left:5px; margin-right:5px"><input type="submit" name="update" value="Обновить">
+        </p>
+        <p>Список списков скомпрометированных многочленов</p>
+        <div style="overflow: auto; width:600px; height:100px; border: 1px solid black; position: relative">[114, 99, 105, 56, 90, 63, 76, 45, 51, 104, 72, 93, 67, 48, 88, 79, 86, 111, 48, 43]<br>[7, 58, 75, 105, 69, 57, 115, 85, 78, 82, 102, 8, 18, 0, 75, 30, 66, 72, 68, 46]<br>[64, 46, 7, 18, 58, 57, 39, 61, 71, 63, 110, 36, 94, 64, 44, 80, 21, 64, 68, 37]<br>[47, 126, 30, 82, 26, 98, 101, 119, 58, 89, 49, 15, 16, 33, 44, 98, 44, 92, 100, 10]</div><br>
+        <input type="submit" name="opening" value="Вскрыть">
+        <div style="overflow: auto; width:600px; height:125px; border: 1px solid black; position: relative; margin-top:15px">Степень многочлена F(X_1,...,X_k) по каждой переменной m = 3<br>Число участников привилегерованной группы k = 4<br>Список рангов частичных СЛАУ:
+            [4, 3, 2, 1, 3, 2, 1, 2, 1, 1, 3, 2, 1, 2, 1, 1, 2, 1, 1, 1]<br>Таблица r степеней индентификаторов m+1 участников: r= [[1, 1, 1, 1], [1, 2, 4, 8], [1, 3, 9, 27], [1, 4, 16, 64]]<br>Построенная 1-ая СЛАУ: [[7, 1, 1, 1, 1], [114, 1, 2, 4, 8], [64, 1, 3, 9, 27], [47, 1, 4, 16, 64]]</div><br>
+        <p>Постройте 2-ую СЛАУ:
+            <input type="text" size="46" style="margin-left:5px; margin-right:5px"><input type="submit" name="build" value="Построить">
+        </p>
+        <div style="overflow: auto; width:600px; height:auto; border: 1px solid black; position: relative; margin-top:15px">Построенная СЛАУ: [[[7, 1, 1, 1, 1], [114, 1, 2, 4, 8], [64, 1, 3, 9, 27], [47, 1, 4, 16, 64]], [[99, 1, 2, 4, 8], [46, 1, 3, 9, 27], [126, 1, 4, 16, 64]], [[7, 1, 3, 9, 27], [30, 1, 4, 16, 64]], [[82, 1, 4, 16, 64]], [[90, 1, 2, 4, 8], [58, 1, 3, 9, 27], [26, 1, 4, 16, 64]], [[57, 1, 3, 9, 27], [98, 1, 4, 16, 64]], [[101, 1, 4, 16, 64]], [[61, 1, 3, 9, 27], [119, 1, 4, 16, 64]], [[58, 1, 4, 16, 64]], [[89, 1, 4, 16, 64]], [[72, 1, 2, 4, 8], [110, 1, 3, 9, 27], [49, 1, 4, 16, 64]], [[36, 1, 3, 9, 27], [15, 1, 4, 16, 64]], [[16, 1, 4, 16, 64]], [[64, 1, 3, 9, 27], [33, 1, 4, 16, 64]], [[44, 1, 4, 16, 64]], [[98, 1, 4, 16, 64]], [[21, 1, 3, 9, 27], [44, 1, 4, 16, 64]], [[92, 1, 4, 16, 64]], [[100, 1, 4, 16, 64]], [[10, 1, 4, 16, 64]]]</div><br>
+        <p>Восстановить исходный многочлен:
+            <input type="submit" name="result" value="Результат">
+        </p>
+        <div style="overflow: auto; width:600px; height:auto; border: 1px solid black; position: relative; margin-top:15px">Кэффициенты исходного многочлена:
+            [61, 77, 49, 74, 69, 107, 59, 68, 105, 121, 113, 111, 30, 62, 31, 122, 42, 40, 29, 64, 91, 74, 78, 5, 72, 92, 126, 61, 38, 32, 102, 50, 48, 80, 124]<br>
+            Восстановленные коэффициенты:
+            [61, 77, 49, 74, 69, 107, 59, 68, 105, 121, 113, 111, 30, 62, 31, 122, 42, 40, 29, 64, 91, 74, 78, 5, 72, 92, 126, 61, 38, 32, 102, 50, 48, 80, 124]<br>
+            Коэффициенты исходного многочлена F(X_1,...,X_k) восстановлены верно:
+            True</div><br>
+    </form>
+
+</body>
+</html>
+2-ая СЛАУ: [[99, 1, 2, 4, 8], [46, 1, 3, 9, 27], [126, 1, 4, 16, 64]]

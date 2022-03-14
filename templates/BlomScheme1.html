@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h3>1. Генерация схемы предварительного распределения ключей</h3>
+    <form name="Gen" style="position: relative" action="{% url 'generate' %}">
+        <p>p:
+            <input type="text" size="25" style="margin-left:5px" name="p_input">
+        </p>
+        <p>k:
+            <input type="text" size="25" style="margin-left:5px" name="k_input">
+        </p>
+        <p>m:
+            <input type="text" size="25" style="margin-left:2px" name="m_input">
+        </p>
+        <p>
+            Исходный многочлен:
+        </p>
+        <div style="overflow: auto; width:300px; height:auto; border: 1px solid black; position: relative">{{sv}}</div><br>
+        <input type="submit" name="generate_button" value="Генерировать">
+    </form>
+    <h3>2. Вычисление ключа конференц-связи</h3>
+    <form name="Calcul" style="position: relative" action="{% url 'get' %}">
+        <p>Индентификаторы участников конференц-связи:<br><br>
+            <input type="text" size="25" style="margin-left:5px" name="participantsID">
+        </p>
+        <p>Вычисление ключа
+            <input type="text" size="1" style="margin-left:5px; margin-right:5px" name="key_first">участником
+        </p>
+        <div style="overflow: auto; width:300px; height:auto; border: 1px solid black; position: relative">{{prekey_first}}<br>Ключ = {{key_first}}</div>
+        <p>Вычисление ключа
+            <input type="text" size="1" style="margin-left:5px; margin-right:5px" name="key_second">участником
+        </p>
+        <div style="overflow: auto; width:300px; height:auto; border: 1px solid black; position: relative">{{prekey_second}}<br>Ключ = {{key_first}}</div><br>
+        <input type="submit" name="calculate" value="Вычислить">
+        <div style="overflow: auto; width:300px; height:20px; border: 1px solid black; position: relative; margin-top:15px">{{res}}</div><br>
+    </form>
+    <h3>3. Вскрытие схемы Блома</h3>
+    <form name="Open" style="position: relative" action="{% url 'open' %}">
+        <p>p:
+            <input type="text" size="25" style="margin-left:5px">
+        </p>
+        <p>Список индентификаторов
+            <input type="text" size="10" style="margin-left:5px; margin-right:5px"><input type="submit" name="update" value="Обновить">
+        </p>
+        <p>Список списков скомпрометированных многочленов</p>
+        <div style="overflow: auto; width:600px; height:100px; border: 1px solid black; position: relative"><br><br><br></div><br>
+        <input type="submit" name="opening" value="Вскрыть">
+        <div style="overflow: auto; width:600px; height:auto; border: 1px solid black; position: relative; margin-top:15px">Степень многочлена F(X_1,...,X_k) по каждой переменной m = {{test_get_m}}<br>Число участников привилегерованной группы k = 4<br>
+            Список рангов частичных СЛАУ: {{rklst}}<br>Таблица r степеней индентификаторов m+1 участников: r= {{r}}<br>Строка коэффициетов m+1 многочленов F(r_i,X_2,...,X_k) m+1 участников участников: {{slau1}}</div><br>
+<!--        <p>Постройте 2-ую СЛАУ:-->
+<!--            <input type="text" size="46" style="margin-left:5px; margin-right:5px"><input type="submit" name="build" value="Построить">-->
+<!--        </p>-->
+<!--        <div style="overflow: auto; width:600px; height:auto; border: 1px solid black; position: relative; margin-top:15px"><br><br></div><br>-->
+        <p>Восстановить исходный многочлен:
+            <input type="submit" name="result" value="Результат">
+        </p>
+        <div style="overflow: auto; width:600px; height:auto; border: 1px solid black; position: relative; margin-top:15px">Коэффициенты исходного многочлена:{{resul}}<br>
+            Восстановленные коэффициенты: {{resul}}<br>Коэффициенты исходного многочлена F(X_1,...,X_k) восстановлены верно: {{resule}}
+            </div><br>
+    </form>
+
+</body>
+</html>
