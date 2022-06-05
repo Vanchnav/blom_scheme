@@ -1,7 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 import random
-import requests
 
 
 def get_k(request):
