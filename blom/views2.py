@@ -4,30 +4,11 @@ import random
 import requests
 
 
-def get_k(request):
-    k = request.GET['k_input']
-    return k
 
-
-def get_m(request):
-    m = request.GET['m_input']
-    return m
-
-
-def get_p(request):
-    p = request.GET['p_input']
-    return p
-
-
-def get_n(request):
-    n = request.GET['n_input']
-    return n
-
-
-# k = 4
-# m = 3
-# n = 7
-# p = 127
+k = 4
+m = 3
+n = 7
+p = 127
 # p = int(requests.get('p_input'))
 # k = int(requests.GET['k_input'])
 # m = int(requests.GET['m_input'])
@@ -93,17 +74,7 @@ def cfind(k,m):
     return A
 
 
-def create_l(k,m):
-    l = cfind(k,m)
-    return l
-
-
-def create_lc(k,m):
-    lc = cfind(k - 1,m)
-    return lc
-
-
-def cfn(A,c,r,k,m):
+def cfn(A,c,r):
     #print "Определение номера элемента списка A - коэффициента секретного многочлена, соответсвующего коэффициенту секретного многочлена для коэффициента c[i] j-го участника"
     u=c+[]
     if u[int(len(u))-1]<=r:
@@ -117,32 +88,27 @@ def cfn(A,c,r,k,m):
         u.insert(i,r)
         #print u
         c=u+[]
-    return [i for i, j in enumerate(create_l(k,m)) if j == u][0]
+    return [i for i, j in enumerate(l) if j == u][0]
 
 
-# l=cfind(k,m)
-# lc=cfind(k-1,m)
+l=cfind(k,m)
+lc=cfind(k-1,m)
 
 
 R=[]
 
-
-def create_R(k,m):
-    l = create_l(k,m)
-    lc = create_lc(k,m)
-    for i in range (0,int(len(lc))):
-        rc=[]
-        rc.append(lc[i])
-        for j in range (0,m+1):
-            u=cfn(l,lc[i],j)
-            rc.append(u)
-        R.append(rc)
-    return R
+for i in range (0,int(len(lc))):
+    rc=[]
+    rc.append(lc[i])
+    for j in range (0,m+1):
+        u=cfn(l,lc[i],j)
+        rc.append(u)
+    R.append(rc)
 #print "Таблица R - таблица координат степеней идентификаторов ri, i=1,...,n (имя списка R)"
 #print R
 
 
-def LNcreat(l,k):
+def LNcreat(l):
     LN=[]
     ln=[]
     for j in range (0,int(len(l))-1):
@@ -161,10 +127,7 @@ def LNcreat(l,k):
     LN.append([l[int(len(l)-1)][k-1]])
     return(LN)
 #print "Таблица E: списки номеров пользователей в данной группе коэффициентов (имя списка E)"
-def create_E(k,m):
-    l = create_l(k,m)
-    E=LNcreat(l)
-    return E
+E=LNcreat(l)
 #print E
 
 
@@ -175,10 +138,7 @@ def ranklst(E):
         rklst.append(int(len(E[i])))
     return rklst
 #print "Таблица En :Список рангов частичных СЛАУ (имя списка rklst)"
-def create_rklst(k,m):
-    l = create_l(k, m)
-    E = LNcreat(l)
-    rklst=ranklst(E)
+rklst=ranklst(E)
 #print rklst
 
 
@@ -196,7 +156,7 @@ def generate(n):
     return a
 
 
-def secretvalues(p,A,k,m,n):
+def secretvalues(p,A):
     sv=[]
     for i in range (0,Nkm(k,m)):
         sv1=[]
@@ -208,7 +168,7 @@ def secretvalues(p,A,k,m,n):
     return sv
 
 
-#sv=secretvalues(p,l)
+sv=secretvalues(p,l)
 # print ("Исходный многочлен F(X_1,...,X_k) (имя списка sv): входная случайная бинарная последовательность имитируется псевдо случайным бинарнымгенератором.")
 # print ("sv=",sv)
 """
@@ -227,33 +187,22 @@ def genScheme(request):
     test_get_p = int(request.GET['p_input'])
     test_get_k = int(request.GET['k_input'])
     test_get_m = int(request.GET['m_input'])
-    test_get_n = int(request.GET['n_input'])
-    request.session['test_get_p'] = int(request.GET['p_input'])
-    request.session['test_get_k'] = int(request.GET['k_input'])
-    request.session['test_get_m'] = int(request.GET['m_input'])
-    request.session['test_get_n'] = int(request.GET['n_input'])
     Nkm(test_get_k, test_get_m)
-    # request.session['Nkm'] = Nkm
+    n = 7
     l = cfind(test_get_k, test_get_m)
-    # request.session['l'] = l
     lc = cfind(test_get_k-1, test_get_m)
-    # request.session['lc'] = lc
     R = []
 
     for i in range(0, int(len(lc))):
         rc = []
         rc.append(lc[i])
         for j in range(0, test_get_m + 1):
-            u = cfn(l, lc[i], j, test_get_k, test_get_m)
+            u = cfn(l, lc[i], j)
             rc.append(u)
         R.append(rc)
-    # request.session['R'] = R
-    E = LNcreat(l,test_get_k)
-    # request.session['E'] = E
+    E = LNcreat(l)
     rklst = ranklst(E)
-    # request.session['rklst'] = rklst
-    sv = secretvalues(test_get_p, l, test_get_k, test_get_m, test_get_n)
-    request.session['sv'] = sv
+    sv = secretvalues(test_get_p, l)
     return render(request, 'BlomScheme1.html', {'sv': sv})
 
 
@@ -270,20 +219,16 @@ def genScheme(request):
 """
 
 
-def identifiers(p,n):
+def identifiers(p):
     #print "Формирование списка идентификаторов"
     idtf=[]
     for i in range (1,n+1):
        idtf.append(i)
     return idtf
-
-
-def create_idtf(n):
-    idtf=identifiers(n)
-    return idtf
+idtf=identifiers(n)
 #print "Идентификаторы n участников (имя списка idtf)"
 #print idtf
-def identivierdegrees(idtf,n,m,p):
+def identivierdegrees(idtf,n):
     idtfd=[]
     for i in range(0,n):
         idtfdraw=[]
@@ -292,12 +237,9 @@ def identivierdegrees(idtf,n,m,p):
         idtfd.append(idtfdraw)
     return idtfd
 #print "Таблица r степеней (от 0 до m-ой)  идентификаторов r_i, i-1,...,n, n участников (имя списка r)"
-def create_r(n):
-    idtf=identifiers(n)
-    r=identivierdegrees(idtf,n)
-    return r
+r=identivierdegrees(idtf,n)
 # print (r)
-def CVal(R,r,sv,m):
+def CVal(R,r,sv):
     #print "Вычисление слагаемых коэффициентов полиномов F(r_i,X_2,...,X_k), i=1,...,n, n участников и самих этих коэффициентов суммированием слагаемых (имя списка r)"
     cval=[]
     p = 127
@@ -315,20 +257,16 @@ def CVal(R,r,sv,m):
             tt.append(g)
     return (cval,tt)
 #print "Слагаемые контрольных коэффициетов полиномов F(r_i,X_2,...,X_k), i=1,...,n, n участников (имя списка slay[0])"
-def create_slay(p,k,m,l,n,r):
-    sv = secretvalues(p, l, k, m, n)
-    slay=CVal(R,r,sv)
-    return slay
+slay=CVal(R,r,sv)
 # print  ("slay0",slay[0])
 #print "Таблица K: строка коэффициетов многочленов F(r_i,X_2,...,X_k), i=1,...,n, n участников - получена суммированием по модулю p чисел из элементов списка slay[0] (имя списка slay[1])"
 # print  ("slay1",slay[1])
 output=[]
-def create_output(slay,n):
-    for i in range (0, int(int(len(slay[1]))/n)):
-        outp=[]
-        for j in range(0,n):
-            outp.append(slay[1][(n)*i+j])
-        output.append(outp)
+for i in range (0, int(int(len(slay[1]))/n)):
+    outp=[]
+    for j in range(0,n):
+        outp.append(slay[1][(n)*i+j])
+    output.append(outp)
 # print ("Таблица Выход: Список наборов коэффициентов многочленов F(r_i,X_2,...,X_k), i=1,...,n, n участников в порядке возрастания степеней мономов в элементарных многочленах (имя списка output):")
 # print ("output=",output)
 
@@ -363,7 +301,7 @@ def ccfn(A,c,r):
         l=[[0, 0, 0], [0, 0, 1], [0, 1, 1], [1, 1, 1]]
     return [i for i, j in enumerate(l) if j == u][0]
 
-def Rcomputing(l,lc,p,m,k):
+def Rcomputing(l,lc,p,m):
     R=[]
     for i in range (0,int(len(lc))):
         rc=[]
@@ -372,7 +310,7 @@ def Rcomputing(l,lc,p,m,k):
         #print "rc",rc
         for j in range (0,m+1):
             #print "j=",j
-            u=cfn(l,lc[i],j,k,m)
+            u=cfn(l,lc[i],j)
             rc.append(u)
         #print "rc",rc
         R.append(rc)
@@ -400,7 +338,7 @@ def LNcreate(l,k):
     LN.append([l[int(len(l)-1)][k-1]])
     return(LN)
 
-def CVall(R,r,s,sv,m):
+def CVall(R,r,s,sv):
     #print "Вычисление слагаемых коэффициентов полиномов F(r_i,X_2,...,X_k), i=1,...,n, n участников и самих этих коэффициентов суммированием слагаемых (имя списка r)"
     p = 127
     cval=[]
@@ -417,40 +355,34 @@ def CVall(R,r,s,sv,m):
             tt.append(g)
     return (cval,tt)
 
-def substitution(sv,p,k,m,s,r):
+def substitution(sv,p,k,m,s):
     #print     "Список коэффициетов многочлена F(X_{i+1),X_{i+2),...,X_k), "
     l=cfind(k,m)
     lc=cfind(k-1,m)
-    R=Rcomputing(l,lc,p,m,k)
+    R=Rcomputing(l,lc,p,m)
     #print "Таблица R - таблица координат степеней идентификаторов ri, i=1,...,k (имя списка R)"
     #print R
     #print "Таблица E: списки номеров пользователей в данной группе коэффициентов (имя списка E)"
     E=LNcreate(l,k)
     #print E
-    slay=CVall(R,r,s,sv,m)
+    slay=CVall(R,r,s,sv)
     #print "Слагаемые  коэффициетов многочлена F(r_{i+1),X_{i+2),...,X_k)"
     #print  "slay0",slay[0]
     #print "Таблица K: список коэффициетов многочлена F(r_{i+1),X_{i+2),...,X_k),  получена суммированием по модулю p чисел из элементов списка slay[0] (имя списка slay[1])"
     #print  "slay1",slay[1]
     return slay[1]
-
-def create_prekey(sv,p,k,m):
-    prekey=substitution(sv,p,k,m,1)
-    return prekey
+prekey=substitution(sv,p,k,m,1)
 # print ("Предварительный ключ первого участника конференц-связи (список prekey):")
 # prekey=[114,99,105,56,90,63,76,45,51,104,72,93,67,48,88,79,86,111,48,43]
 # print ("prekey=",prekey)
 # print ("Ключ конференц-связи участников", participants,"(имя списка key):")
-def finalsubstitution(f,r,rr,m,p):
+def finalsubstitution(f,r,rr):
     key=f[0]
     for i in range (0,m):
         key=(key+(f[i+1]*r[rr][i+1])%p)%p
     return key
-
-def create_key(prekey,r,k):
-    key= finalsubstitution(prekey,r,k-1)
-    return key
-#print (key)
+key= finalsubstitution(prekey,r,k-1)
+print (key)
 
 
 """
@@ -467,16 +399,11 @@ def create_key(prekey,r,k):
 
 
 def getKeys(request):
-    test_get_n = int(request.session['test_get_n'])
-    test_get_p = int(request.session['test_get_p'])
-    # test_get_p = int(request.session['test_get_p'])
-    test_get_k = int(request.session['test_get_k'])
-    # test_get_k = int(request.session['test_get_k'])
-    test_get_m = int(request.session['test_get_m'])
-    # test_get_m = int(request.session['test_get_m'])
-    # n = request.session['n_input']
-    idtf = identifiers(test_get_p, test_get_n)
-    r = identivierdegrees(idtf, test_get_n, test_get_m,test_get_p)
+    idtf = identifiers(n)
+    r = identivierdegrees(idtf, n)
+    test_get_p = int(request.GET.get('p_input', '127'))
+    test_get_k = int(request.GET.get('k_input', '4'))
+    test_get_m = int(request.GET.get('m_input', '3'))
     Nkm(test_get_k, test_get_m)
     l = cfind(test_get_k, test_get_m)
     lc = cfind(test_get_k - 1, test_get_m)
@@ -486,18 +413,18 @@ def getKeys(request):
         rc = []
         rc.append(lc[i])
         for j in range(0, test_get_m + 1):
-            u = cfn(l, lc[i], j,test_get_k,test_get_m)
+            u = cfn(l, lc[i], j)
             rc.append(u)
         R.append(rc)
-    E = LNcreat(l,test_get_k)
+    E = LNcreat(l)
     rklst = ranklst(E)
-    sv = request.session['sv']
-    slay = CVal(R, r, sv, test_get_m)
+    sv = secretvalues(test_get_p, l)
+    slay = CVal(R, r, sv)
     output = []
-    for i in range(0, int(int(len(slay[1])) / test_get_n)):
+    for i in range(0, int(int(len(slay[1])) / n)):
         outp = []
-        for j in range(0, test_get_n):
-            outp.append(slay[1][(test_get_n) * i + j])
+        for j in range(0, n):
+            outp.append(slay[1][(n) * i + j])
         output.append(outp)
     participants = [1]
     for i in range(2, test_get_k + 1):
@@ -507,19 +434,14 @@ def getKeys(request):
     participantsID = [int(item) for item in participantsI]
     for i in range(0, test_get_k):
         participantsID.append(idtf[participants[i]])
-    r = identivierdegrees(participantsID, test_get_n,test_get_m,test_get_p)
-    dict = {}
-    for i in range(1, test_get_m+1):
-        prekey = substitution(sv, test_get_p, test_get_k, test_get_m, i, r)
-        k = 'Предварительный ключ ' + str(i) + '-го участника'
-        dict[k] = prekey
-    prekey_first = substitution(sv, test_get_p, test_get_k, test_get_m, 1, r)
-    key_first = finalsubstitution(prekey_first, r, test_get_k - 1, test_get_m, test_get_p)
-    prekey_second = substitution(sv, test_get_p, test_get_k, test_get_m, 2, r)
-    key_second = finalsubstitution(prekey_second, r, test_get_k - 1, test_get_m, test_get_p)
+    r = identivierdegrees(participantsID, test_get_k)
+    prekey_first = substitution(sv, test_get_p, test_get_k, test_get_m, 1)
+    key_first = finalsubstitution(prekey_first, r, test_get_k - 1)
+    prekey_second = substitution(sv, test_get_p, test_get_k, test_get_m, 2)
+    key_second = finalsubstitution(prekey_second, r, test_get_k - 1)
     if key_first == key_first:
         res = 'Совпадение ключей: True'
-    return render(request, 'BlomScheme1.html', {'key_first': key_first, 'key_second': key_second, 'prekey_first': dict, 'prekey_second': prekey_second, 'sv': sv, 'res': res})
+    return render(request, 'BlomScheme1.html', {'key_first': key_first, 'key_second': key_second, 'prekey_first': prekey_first, 'prekey_second': prekey_second, 'sv': sv, 'res': res})
 
 
 """
@@ -567,19 +489,34 @@ def gauss(M, p):
         q.append(M[i][0])
     return q
 
+# print("УСТАНОВКА ИСХОДНЫХ ДАННЫХ")
+# p = 127
+# print("Порядок поля p=", p)
+# print("Список идентификаторов скомпрометированных участников (имя списка idtf)")
+# idtf = [0, 1, 2, 3]
+# print(idtf)
+# print("Список списков коэффициентов скомпрометированных многочленов (имя списка compromat)")
+# print("Наборы коэффициентов перечисляются в порядке возрастания степеней мономов в элементарных многочленах")
+# compromat = [[7, 114, 64, 47, 126, 110, 62], [58, 99, 46, 126, 58, 69, 5], [75, 105, 7, 30, 42, 38, 13], [105, 56, 18, 82, 85, 118, 18], [69, 90, 58, 26, 47, 47, 79], [57, 63, 57, 98, 118, 49, 77], [115, 76, 39, 101, 105, 21, 73], [85, 45, 61, 119, 78, 51, 24], [78, 51, 71, 58, 59, 121, 37], [82, 104, 63, 89, 58, 100, 91], [102, 72, 110, 49, 103, 105, 15], [8, 93, 36, 15, 81, 31, 43], [18, 67, 94, 16, 4, 102, 100], [0, 48, 64, 33, 67, 24, 16], [75, 88, 44, 44, 62, 72, 48], [30, 79, 80, 98, 71, 64, 15], [66, 86, 21, 44, 74, 30, 85], [72, 111, 64, 92, 102, 1, 77], [68, 48, 68, 100, 116, 88, 115], [46, 43, 37, 10, 71, 75, 4]]
+# print(compromat)
+# m = int(len(compromat[0])) - 1
+# m = 3
+# print("ВЫЧИСЛЕНИЕ ПРОИЗВОДНЫХ ПАРАМЕТРОВ")
+# print("Степень многочлена F(X_1,...,X_k) по каждой переменной m=", m)
 
-# compromat = output
-# slau1 = []
-# for i in range(0, int(len(compromat))):
-#     for j in range(0, m + 1):
-#         print
-#         slau1.append(compromat[i][j])
+
+compromat = output
+slau1 = []
+for i in range(0, int(len(compromat))):
+    for j in range(0, m + 1):
+        print
+        slau1.append(compromat[i][j])
 # print("Таблица K: строка коэффициетов m+1 многочленов F(r_i,X_2,...,X_k) m+1 участников участников (имя списка slay1)")
 # print(slau1)
 #
 # print("Определение числа участников привилегированной группы")
 
-def participantsnumber(lst, m):
+def participantsnumber(lst):
     K = []
     k = 1
     for i in range(0, m):
@@ -595,6 +532,10 @@ def participantsnumber(lst, m):
             K.insert(i, r)
     return k
 
+# k = participantsnumber(slau1)
+#k = 4
+# print("k=", k)
+# print("Вычисление числа n(k,m)")
 
 def NKM(k, m):
     K = []
@@ -611,7 +552,25 @@ def NKM(k, m):
     return K[m - 1]
 
 nkm = NKM(4, 3)
-def identivierdegreees(idtf, m, p):
+# print("nkm=", nkm)
+
+# l = cfind(k, m)
+# lc = cfind(k - 1, m)
+#
+# R = []
+#
+# for i in range(0, int(len(lc))):
+#     rc = []
+#     rc.append(lc[i])
+#     for j in range(0, m + 1):
+#         u = cfn(l, lc[i], j)
+#         rc.append(u)
+#     R.append(rc)
+# print "Таблица R - таблица координат степеней идентификаторов ri (имя списка R)"
+# print R
+# rklst = ranklst(E)
+# print rklst
+def identivierdegreees(idtf, m):
     idtfd = []
     for i in range(0, m + 1):
         idtfdraw = [1]
@@ -623,7 +582,7 @@ def identivierdegreees(idtf, m, p):
 # r = identivierdegreees(idtf, m)
 # print r
 print("КРИПТОАНАЛИЗ: СОСТАВЛЕНИЕ И РЕШЕНИЕ СИСТЕМЫ СЛАУ (по таблицам Е,En, R и K)")
-def createSLAU(e, r, i,rklst,E,slau1,m):
+def createSLAU(e, r, i):
     # print "Состаление очередной СЛАУ"
     SLAU1 = []
     for j in range(int(len(E[0])) - rklst[i], int(len(E[0]))):
@@ -635,15 +594,20 @@ def createSLAU(e, r, i,rklst,E,slau1,m):
         SLAU1.append(Row)
     return SLAU1
 
-def slaulist(e, r, rklst,E,slau1,m):
+def slaulist(e, r, rklst):
     slist1 = []
     for i in range(0, int(len(rklst))):
-        slist2 = createSLAU(e, r, i,rklst,E,slau1,m)  # (m+1)-rklst[i])
+        slist2 = createSLAU(e, r, i)  # (m+1)-rklst[i])
         slist1.append(slist2)
     return slist1
 
+# slist1 = slaulist(E, r, rklst)
+# print("Построенная система слау (имя списка slist1)")
+# print("slist1", slist1)
+# print("Полученные слау позволяют восстановить искодный полином F(X_1,...,X_k) (имя списка sv)")
 
-def redusing(slist1, R, sln, rklst, i, j, s,m,p):
+
+def redusing(slist1, R, sln, rklst, i, j, s):
     # print "Модификация левых частей уравнений с учетом номера группы коэффициентов и вычисленных значений исходного полинома"
     slist11 = slist1 + []
     slist11[i][j][0] = (slist11[i][j][0] - (
@@ -684,30 +648,37 @@ def gauss(M, p):
     return q
 
 
-"""
-Вскрытие схемы Блома
-Вскрытие схемы Блома
-Вскрытие схемы Блома
-Вскрытие схемы Блома
-Вскрытие схемы Блома
-Вскрытие схемы Блома
-Вскрытие схемы Блома
-Вскрытие схемы Блома
-Вскрытие схемы Блома
-"""
+# print("Восстановление исходного полинома последовательным решением уравнений из списка СЛАУ")
+# ss = slist1 + []
+# sln = []
+# for i in range(0, int(len(rklst))):
+#     # print "i,,m+1-(m+1-rklst[i])",i,(m+1-rklst[i])
+#     for s in range(0, 1 + m - rklst[i]):
+#         # print "s",s
+#         for j in range(0, rklst[i]):
+#             # print "j",j
+#             ss = redusing(ss, R, sln, rklst, i, j, s)
+#             # print "ss",ss
+#             # print ss
+#     gs = gauss(ss[i], p)
+#     # print "gs",gs
+#     for k in range(0, int(len(gs))):
+#         sln.append(gs[k])
+#         # print sln
+# print("Коэффициенты искомого многочлена F(X_1,...,X_2) (имя списка sln):")
+# print("Коэффициенты перечислены в порядке возрастания степеней мономов в однородных многочленах симметричного многочлена.")
+# print(sln)
+# print ("Коэффициенты исходного многочлена F(X_1,...,X_k) восстановлены верно")
+# print (sv==sln)
 
 
 def openScheme(request):
-    test_get_n = int(request.session['test_get_n'])
-    test_get_p = int(request.session['test_get_p'])
-    # test_get_p = int(request.session['test_get_p'])
-    test_get_k = int(request.session['test_get_k'])
-    # test_get_k = int(request.session['test_get_k'])
-    test_get_m = int(request.session['test_get_m'])
-    # test_get_m = int(request.session['test_get_m'])
-    # n = request.session['n_input']
-    idtf = identifiers(test_get_p, test_get_n)
-    r = identivierdegrees(idtf, test_get_n, test_get_m, test_get_p)
+    n = 7
+    idtf = identifiers(n)
+    r = identivierdegrees(idtf, n)
+    test_get_p = int(request.GET.get('p_input', '127'))
+    test_get_k = int(request.GET.get('k_input', '4'))
+    test_get_m = int(request.GET.get('m_input', '3'))
     Nkm(test_get_k, test_get_m)
     l = cfind(test_get_k, test_get_m)
     lc = cfind(test_get_k - 1, test_get_m)
@@ -717,18 +688,18 @@ def openScheme(request):
         rc = []
         rc.append(lc[i])
         for j in range(0, test_get_m + 1):
-            u = cfn(l, lc[i], j, test_get_k, test_get_m)
+            u = cfn(l, lc[i], j)
             rc.append(u)
         R.append(rc)
-    E = LNcreat(l, test_get_k)
+    E = LNcreat(l)
     rklst = ranklst(E)
-    sv = request.session['sv']
-    slay = CVal(R, r, sv, test_get_m)
+    sv = secretvalues(test_get_p, l)
+    slay = CVal(R, r, sv)
     output = []
-    for i in range(0, int(int(len(slay[1])) / test_get_n)):
+    for i in range(0, int(int(len(slay[1])) / n)):
         outp = []
-        for j in range(0, test_get_n):
-            outp.append(slay[1][(test_get_n) * i + j])
+        for j in range(0, n):
+            outp.append(slay[1][(n) * i + j])
         output.append(outp)
     participants = [1]
     for i in range(2, test_get_k + 1):
@@ -738,16 +709,11 @@ def openScheme(request):
     participantsID = [int(item) for item in participantsI]
     for i in range(0, test_get_k):
         participantsID.append(idtf[participants[i]])
-    r = identivierdegrees(participantsID, test_get_n, test_get_m, test_get_p)
-    dict = {}
-    for i in range(1, test_get_m + 1):
-        prekey = substitution(sv, test_get_p, test_get_k, test_get_m, i, r)
-        k = 'Предварительный ключ ' + str(i) + '-го участника'
-        dict[k] = prekey
-    prekey_first = substitution(sv, test_get_p, test_get_k, test_get_m, 1, r)
-    key_first = finalsubstitution(prekey_first, r, test_get_k - 1, test_get_m, test_get_p)
-    prekey_second = substitution(sv, test_get_p, test_get_k, test_get_m, 2, r)
-    key_second = finalsubstitution(prekey_second, r, test_get_k - 1, test_get_m, test_get_p)
+    r = identivierdegrees(participantsID, test_get_k)
+    prekey_first = substitution(sv, test_get_p, test_get_k, test_get_m, 1)
+    key_first = finalsubstitution(prekey_first, r, test_get_k - 1)
+    prekey_second = substitution(sv, test_get_p, test_get_k, test_get_m, 2)
+    key_second = finalsubstitution(prekey_second, r, test_get_k - 1)
     if key_first == key_first:
         res = 'Совпадение ключей: True'
 
@@ -758,14 +724,14 @@ def openScheme(request):
         for j in range(0, test_get_m + 1):
             slau1.append(compromat[i][j])
 
-    r = identivierdegreees(idtf, test_get_m, test_get_p)
-    slist1 = slaulist(E, r, rklst,E,slau1,test_get_m)
+    r = identivierdegreees(idtf, test_get_m)
+    slist1 = slaulist(E, r, rklst)
     ss = slist1 + []
     sln = []
     for i in range(0, int(len(rklst))):
         for s in range(0, 1 + test_get_m - rklst[i]):
             for j in range(0, rklst[i]):
-                ss = redusing(ss, R, sln, rklst, i, j, s, test_get_m, test_get_p)
+                ss = redusing(ss, R, sln, rklst, i, j, s)
         gs = gauss(ss[i], test_get_p)
         for test_get_k in range(0, int(len(gs))):
             sln.append(gs[test_get_k])
@@ -773,21 +739,8 @@ def openScheme(request):
         resule = 'True'
     else:
         resule = 'False'
-    return render(request, 'BlomScheme1.html', {'key_first': key_first, 'key_second': key_second, 'prekey_first': dict,
+    return render(request, 'BlomScheme1.html', {'key_first': key_first, 'key_second': key_second, 'prekey_first': prekey_first,
                                                 'prekey_second': prekey_second,
                                                 'sv': sv, 'res': res, 'test_get_m': test_get_m,
                                                 'test_get_k': test_get_k, 'rklst': rklst, 'r': r,
                                                 'slau1': slau1, 'resul': sv, 'resule': resule})
-
-
-"""
-Вскрытие схемы Блома
-Вскрытие схемы Блома
-Вскрытие схемы Блома
-Вскрытие схемы Блома
-Вскрытие схемы Блома
-Вскрытие схемы Блома
-Вскрытие схемы Блома
-Вскрытие схемы Блома
-Вскрытие схемы Блома
-"""

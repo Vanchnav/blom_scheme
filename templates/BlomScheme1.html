@@ -16,6 +16,9 @@
         <p>m:
             <input type="text" size="25" style="margin-left:2px" name="m_input">
         </p>
+        <p>n:
+            <input type="text" size="25" style="margin-left:5px" name="n_input">
+        </p>
         <p>
             Исходный многочлен:
         </p>
@@ -27,12 +30,12 @@
         <p>Индентификаторы участников конференц-связи:<br><br>
             <input type="text" size="25" style="margin-left:5px" name="participantsID">
         </p>
-        <p>Вычисление ключа
-            <input type="text" size="1" style="margin-left:5px; margin-right:5px" name="key_first">участником
+        <p>Вычисление ключей m
+            <input type="text" size="1" style="margin-left:5px; margin-right:5px" name="key_first">участников
         </p>
         <div style="overflow: auto; width:300px; height:auto; border: 1px solid black; position: relative">{{prekey_first}}<br>Ключ = {{key_first}}</div>
         <p>Вычисление ключа
-            <input type="text" size="1" style="margin-left:5px; margin-right:5px" name="key_second">участником
+            <input type="text" size="1" style="margin-left:5px; margin-right:5px" name="key_second">участника
         </p>
         <div style="overflow: auto; width:300px; height:auto; border: 1px solid black; position: relative">{{prekey_second}}<br>Ключ = {{key_first}}</div><br>
         <input type="submit" name="calculate" value="Вычислить">
@@ -62,6 +65,5 @@
             Восстановленные коэффициенты: {{resul}}<br>Коэффициенты исходного многочлена F(X_1,...,X_k) восстановлены верно: {{resule}}
             </div><br>
     </form>
-
 </body>
 </html>
