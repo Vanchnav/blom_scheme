@@ -22,5 +22,8 @@ urlpatterns = [
     path('', views.home),
     path('generate/', views.genScheme, name='generate'),
     path('get/', views.getKeys, name='get'),
+    path('openob/', views.openSchemeOb, name='openob'),
+    path('openscr/', views.openSchemeScr, name='openscr'),
+    path('openbd/', views.openSchemeBd, name='openbd'),
     path('open/', views.openScheme, name='open'),
 ]

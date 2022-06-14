@@ -1538,3 +1538,20 @@ def openScheme(request):
 Вскрытие схемы Блома
 Вскрытие схемы Блома
 """
+
+
+nt = '1,2,3,4'
+print(len(nt))
+ntt = nt.split(',')
+print(ntt)
+print(type(ntt[0]))
+
+test_get_n = 7
+list_of_n = []
+for i in range(1, test_get_n + 1):
+    list_of_n.append(str(i))
+print(list_of_n)
+list2 = ['1','2','4','7']
+print(list(set(list2) - set(list_of_n)))
+if list(set(list2) - set(list_of_n)) != []:
+    print('Нашли')

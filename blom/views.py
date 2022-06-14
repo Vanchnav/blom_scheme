@@ -23,14 +23,6 @@ def get_n(request):
     return n
 
 
-# k = 4
-# m = 3
-# n = 7
-# p = 127
-# p = int(requests.get('p_input'))
-# k = int(requests.GET['k_input'])
-# m = int(requests.GET['m_input'])
-
 def home(request):
     return render(request, 'BlomScheme1.html')
 
@@ -223,37 +215,39 @@ def secretvalues(p,A,k,m,n):
 """
 
 def genScheme(request):
-    test_get_p = int(request.GET['p_input'])
-    test_get_k = int(request.GET['k_input'])
-    test_get_m = int(request.GET['m_input'])
-    test_get_n = int(request.GET['n_input'])
-    request.session['test_get_p'] = int(request.GET['p_input'])
-    request.session['test_get_k'] = int(request.GET['k_input'])
-    request.session['test_get_m'] = int(request.GET['m_input'])
-    request.session['test_get_n'] = int(request.GET['n_input'])
-    Nkm(test_get_k, test_get_m)
-    # request.session['Nkm'] = Nkm
-    l = cfind(test_get_k, test_get_m)
-    # request.session['l'] = l
-    lc = cfind(test_get_k-1, test_get_m)
-    # request.session['lc'] = lc
-    R = []
+    if request.GET['p_input'] == '' or request.GET['k_input'] == '' or request.GET['m_input'] == '' or request.GET['n_input'] == '':
+        return render(request, 'BlomScheme1.html', {'alert1': 'Ошибка: Заполните все поля перед генерацией'})
+    elif int(request.GET['k_input']) <= 1:
+        return render(request, 'BlomScheme1.html', {'alert1': 'Ошибка: Значение k должно быть больше или равно 2'})
+    else:
+        test_get_p = int(request.GET['p_input'])
+        test_get_k = int(request.GET['k_input'])
+        test_get_m = int(request.GET['m_input'])
+        test_get_n = int(request.GET['n_input'])
+        request.session['test_get_p'] = int(request.GET['p_input'])
+        request.session['test_get_k'] = int(request.GET['k_input'])
+        request.session['test_get_m'] = int(request.GET['m_input'])
+        request.session['test_get_n'] = int(request.GET['n_input'])
+        Nkm(test_get_k, test_get_m)
+        l = cfind(test_get_k, test_get_m)
+        lc = cfind(test_get_k-1, test_get_m)
+        R = []
 
-    for i in range(0, int(len(lc))):
-        rc = []
-        rc.append(lc[i])
-        for j in range(0, test_get_m + 1):
-            u = cfn(l, lc[i], j, test_get_k, test_get_m)
-            rc.append(u)
-        R.append(rc)
-    # request.session['R'] = R
-    E = LNcreat(l,test_get_k)
-    # request.session['E'] = E
-    rklst = ranklst(E)
-    # request.session['rklst'] = rklst
-    sv = secretvalues(test_get_p, l, test_get_k, test_get_m, test_get_n)
-    request.session['sv'] = sv
-    return render(request, 'BlomScheme1.html', {'sv': sv})
+        for i in range(0, int(len(lc))):
+            rc = []
+            rc.append(lc[i])
+            for j in range(0, test_get_m + 1):
+                u = cfn(l, lc[i], j, test_get_k, test_get_m)
+                rc.append(u)
+            R.append(rc)
+        # request.session['R'] = R
+        E = LNcreat(l,test_get_k)
+        # request.session['E'] = E
+        rklst = ranklst(E)
+        # request.session['rklst'] = rklst
+        sv = secretvalues(test_get_p, l, test_get_k, test_get_m, test_get_n)
+        request.session['sv'] = sv
+        return render(request, 'BlomScheme1.html', {'sv': sv, 'p': test_get_p, 'k': test_get_k, 'm': test_get_m, 'n': test_get_n})
 
 
 """
@@ -449,7 +443,6 @@ def finalsubstitution(f,r,rr,m,p):
 def create_key(prekey,r,k):
     key= finalsubstitution(prekey,r,k-1)
     return key
-#print (key)
 
 
 """
@@ -468,12 +461,8 @@ def create_key(prekey,r,k):
 def getKeys(request):
     test_get_n = int(request.session['test_get_n'])
     test_get_p = int(request.session['test_get_p'])
-    # test_get_p = int(request.session['test_get_p'])
     test_get_k = int(request.session['test_get_k'])
-    # test_get_k = int(request.session['test_get_k'])
     test_get_m = int(request.session['test_get_m'])
-    # test_get_m = int(request.session['test_get_m'])
-    # n = request.session['n_input']
     idtf = identifiers(test_get_p, test_get_n)
     r = identivierdegrees(idtf, test_get_n, test_get_m,test_get_p)
     Nkm(test_get_k, test_get_m)
@@ -501,24 +490,46 @@ def getKeys(request):
     participants = [1]
     for i in range(2, test_get_k + 1):
         participants.append(i)
-    participants = [1, 2, 3, 4]
-    participantsI = list(request.GET['participantsID'])
-    participantsID = [int(item) for item in participantsI]
-    for i in range(0, test_get_k):
-        participantsID.append(idtf[participants[i]])
-    r = identivierdegrees(participantsID, test_get_n,test_get_m,test_get_p)
-    dict = {}
-    for i in range(1, test_get_m+1):
-        prekey = substitution(sv, test_get_p, test_get_k, test_get_m, i, r)
-        k = 'Предварительный ключ ' + str(i) + '-го участника'
-        dict[k] = prekey
-    prekey_first = substitution(sv, test_get_p, test_get_k, test_get_m, 1, r)
-    key_first = finalsubstitution(prekey_first, r, test_get_k - 1, test_get_m, test_get_p)
-    prekey_second = substitution(sv, test_get_p, test_get_k, test_get_m, 2, r)
-    key_second = finalsubstitution(prekey_second, r, test_get_k - 1, test_get_m, test_get_p)
-    if key_first == key_first:
-        res = 'Совпадение ключей: True'
-    return render(request, 'BlomScheme1.html', {'key_first': key_first, 'key_second': key_second, 'prekey_first': dict, 'prekey_second': prekey_second, 'sv': sv, 'res': res})
+    # participants = [1, 2, 3, 4]
+    if request.GET['participantsID'] == '' or request.GET['key_first'] == '' or request.GET['key_second'] == '':
+        return render(request, 'BlomScheme1.html', {'alert1': 'Ошибка: Заполните поле идентификаторов и все поля номеров ключей участников',
+                                                    'sv': sv, 'p': test_get_p, 'k': test_get_k, 'm': test_get_m, 'n': test_get_n})
+    elif len(request.GET['participantsID'].split(',')) != test_get_k:
+        return render(request, 'BlomScheme1.html',
+                      {'alert1': 'Ошибка: В списке идентификаторов должно быть ' + str(test_get_k) + ' элементов',
+                       'sv': sv, 'p': test_get_p, 'k': test_get_k, 'm': test_get_m, 'n': test_get_n})
+    elif request.GET['key_first'] not in request.GET['participantsID']:
+        return render(request, 'BlomScheme1.html',
+                      {'alert1': 'Ошибка: ' + str(request.GET['key_first']) + ' отсутствует в списке идентификаторов',
+                       'sv': sv, 'p': test_get_p, 'k': test_get_k, 'm': test_get_m, 'n': test_get_n})
+    elif request.GET['key_second'] not in request.GET['participantsID']:
+        return render(request, 'BlomScheme1.html',
+                      {'alert1': 'Ошибка: ' + str(request.GET['key_second']) + ' отсутствует в списке идентификаторов',
+                       'sv': sv, 'p': test_get_p, 'k': test_get_k, 'm': test_get_m, 'n': test_get_n})
+    else:
+        participantss = request.GET['participantsID']
+        request.session['participantss'] = request.GET['participantsID']
+        participantsI = participantss.split(',')
+        participantsID = [int(item) for item in participantsI]
+        for i in range(0, test_get_k):
+            participantsID.append(idtf[participants[i]])
+        r = identivierdegrees(participantsID, test_get_k,test_get_m,test_get_p)
+        key_one = int(request.GET['key_first'])
+        request.session['key_one'] = int(request.GET['key_first'])
+        key_two = int(request.GET['key_second'])
+        request.session['key_two'] = int(request.GET['key_second'])
+        prekey_first = substitution(sv, test_get_p, test_get_k, test_get_m, key_one, r)
+        key_first = finalsubstitution(prekey_first, r, test_get_k - 1, test_get_m, test_get_p)
+        request.session['key_first'] = key_first
+        prekey_second = substitution(sv, test_get_p, test_get_k, test_get_m, key_two, r)
+        key_second = finalsubstitution(prekey_second, r, test_get_k - 1, test_get_m, test_get_p)
+        if key_first == key_first:
+            res = 'Совпадение m ключей: True'
+        return render(request, 'BlomScheme1.html', {'key_first': key_first, 'participantsID': participantss,
+                                                    'key_second': key_first, 'prekey_first': prekey_first,
+                                                    'prekey_second': prekey_second, 'sv': sv, 'res': res,
+                                                    'p': test_get_p, 'k': test_get_k, 'm': test_get_m, 'n': test_get_n,
+                                                    'key_one': key_one, 'key_two': key_two})
 
 
 """
@@ -694,17 +705,92 @@ def gauss(M, p):
 Вскрытие схемы Блома
 Вскрытие схемы Блома
 """
-
-
-def openScheme(request):
+def openSchemeOb(request):
     test_get_n = int(request.session['test_get_n'])
     test_get_p = int(request.session['test_get_p'])
-    # test_get_p = int(request.session['test_get_p'])
     test_get_k = int(request.session['test_get_k'])
-    # test_get_k = int(request.session['test_get_k'])
     test_get_m = int(request.session['test_get_m'])
-    # test_get_m = int(request.session['test_get_m'])
-    # n = request.session['n_input']
+    key_one = request.session['key_one']
+    key_two = request.session['key_two']
+    participantsss = request.session['participantss']
+    list_of_n = []
+    for i in range(1, test_get_n + 1):
+        list_of_n.append(str(i))
+    idtf = identifiers(test_get_p, test_get_n)
+    r = identivierdegrees(idtf, test_get_n, test_get_m, test_get_p)
+    Nkm(test_get_k, test_get_m)
+    l = cfind(test_get_k, test_get_m)
+    lc = cfind(test_get_k - 1, test_get_m)
+    R = []
+
+    for i in range(0, int(len(lc))):
+        rc = []
+        rc.append(lc[i])
+        for j in range(0, test_get_m + 1):
+            u = cfn(l, lc[i], j, test_get_k, test_get_m)
+            rc.append(u)
+        R.append(rc)
+    E = LNcreat(l, test_get_k)
+    rklst = ranklst(E)
+    sv = request.session['sv']
+    slay = CVal(R, r, sv, test_get_m)
+    output = []
+    for i in range(0, int(int(len(slay[1])) / test_get_n)):
+        outp = []
+        for j in range(0, test_get_n):
+            outp.append(slay[1][(test_get_n) * i + j])
+        output.append(outp)
+    participants = [1]
+    for i in range(2, test_get_k + 1):
+        participants.append(i)
+    if request.GET['list_of_idtf'] == '':
+        return render(request, 'BlomScheme1.html', {'p': test_get_p, 'k': test_get_k, 'm': test_get_m, 'n': test_get_n,
+                                                    'key_one': key_one, 'key_two': key_two, 'sv': sv,
+                                                    'alert1': 'Ошибка: Заполните список идентификаторов'})
+    elif len(request.GET['list_of_idtf'].split(',')) > (test_get_n) or len(request.GET['list_of_idtf'].split(',')) <= len(participantsss.split(',')):
+        return render(request, 'BlomScheme1.html', {'p': test_get_p, 'k': test_get_k, 'm': test_get_m, 'n': test_get_n,
+                                                    'key_one': key_one, 'key_two': key_two, 'sv': sv,
+                                                    'alert1': 'Ошибка: Список идентификаторов должен быть не меньше введенного во втором пункте списка, но не более n'})
+    elif list(set(request.GET['list_of_idtf'].split(',')) - set(list_of_n)) != []:
+        return render(request, 'BlomScheme1.html', {'p': test_get_p, 'k': test_get_k, 'm': test_get_m, 'n': test_get_n,
+                                                    'key_one': key_one, 'key_two': key_two, 'sv': sv,
+                                                    'alert1': 'Ошибка: В списке идентификаторов присутствует идентификатор, не относящийся к идентификатором участников'})
+    else:
+        participantss = request.GET['list_of_idtf']
+        request.session['list_of_idtfi'] = request.GET['list_of_idtf']
+        participantsI = participantss.split(',')
+        participantsID = [int(item) for item in participantsI]
+        for i in range(0, test_get_k):
+            participantsID.append(idtf[participants[i]])
+        r = identivierdegrees(participantsID, test_get_n, test_get_m, test_get_p)
+        dict = {}
+        for i in range(0, len(participantsI)):
+            prekey = substitution(sv, test_get_p, test_get_k, test_get_m, int(participantsI[i]), r)
+            k = 'Предварительный ключ ' + str(participantsI[i]) + '-го участника'
+            dict[k] = prekey
+        prekey_first = substitution(sv, test_get_p, test_get_k, test_get_m, key_one, r)
+        key_first = finalsubstitution(prekey_first, r, test_get_k - 1, test_get_m, test_get_p)
+        prekey_second = substitution(sv, test_get_p, test_get_k, test_get_m, key_two, r)
+        key_second = finalsubstitution(prekey_second, r, test_get_k - 1, test_get_m, test_get_p)
+        if key_first == key_first:
+            res = 'Совпадение m ключей: True'
+        return render(request, 'BlomScheme1.html', {'key_first': key_first, 'key_second': key_first, 'prekey_first': prekey_first,
+                                                    'prekey_second': prekey_second,
+                                                    'sv': sv, 'res': res, 'test_get_m': test_get_m,
+                                                    'test_get_k': test_get_k, 'dict': dict,
+                                                    'p': test_get_p, 'k': test_get_k, 'm': test_get_m, 'n': test_get_n,
+                                                    'key_one': key_one, 'key_two': key_two, 'participantsID': participantsss})
+
+
+def openSchemeScr(request):
+    test_get_n = int(request.session['test_get_n'])
+    test_get_p = int(request.session['test_get_p'])
+    test_get_k = int(request.session['test_get_k'])
+    test_get_m = int(request.session['test_get_m'])
+    key_one = request.session['key_one']
+    key_two = request.session['key_two']
+    participantsss = request.session['participantss']
+    list_of_idtfi = request.session['list_of_idtfi']
     idtf = identifiers(test_get_p, test_get_n)
     r = identivierdegrees(idtf, test_get_n, test_get_m, test_get_p)
     Nkm(test_get_k, test_get_m)
@@ -733,22 +819,22 @@ def openScheme(request):
     for i in range(2, test_get_k + 1):
         participants.append(i)
     participants = [1, 2, 3, 4]
-    participantsI = list(request.GET.get('participantsID', '1234'))
+    participantsI = list_of_idtfi.split(',')
     participantsID = [int(item) for item in participantsI]
     for i in range(0, test_get_k):
         participantsID.append(idtf[participants[i]])
     r = identivierdegrees(participantsID, test_get_n, test_get_m, test_get_p)
     dict = {}
-    for i in range(1, test_get_m + 1):
-        prekey = substitution(sv, test_get_p, test_get_k, test_get_m, i, r)
-        k = 'Предварительный ключ ' + str(i) + '-го участника'
+    for i in range(0, len(participantsI)):
+        prekey = substitution(sv, test_get_p, test_get_k, test_get_m, int(participantsI[i]), r)
+        k = 'Предварительный ключ ' + str(participantsI[i]) + '-го участника'
         dict[k] = prekey
-    prekey_first = substitution(sv, test_get_p, test_get_k, test_get_m, 1, r)
+    prekey_first = substitution(sv, test_get_p, test_get_k, test_get_m, key_one, r)
     key_first = finalsubstitution(prekey_first, r, test_get_k - 1, test_get_m, test_get_p)
-    prekey_second = substitution(sv, test_get_p, test_get_k, test_get_m, 2, r)
+    prekey_second = substitution(sv, test_get_p, test_get_k, test_get_m, key_two, r)
     key_second = finalsubstitution(prekey_second, r, test_get_k - 1, test_get_m, test_get_p)
     if key_first == key_first:
-        res = 'Совпадение ключей: True'
+        res = 'Совпадение m ключей: True'
 
 
     compromat = output
@@ -768,15 +854,230 @@ def openScheme(request):
         gs = gauss(ss[i], test_get_p)
         for test_get_k in range(0, int(len(gs))):
             sln.append(gs[test_get_k])
+    slist1 = slaulist(E, r, rklst, E, slau1, test_get_m)
+    first_slau = slist1[:1]
+    return render(request, 'BlomScheme1.html', {'key_first': key_first, 'key_second': key_first, 'prekey_first': prekey_first,
+                                                'prekey_second': prekey_second,
+                                                'sv': sv, 'res': res, 'test_get_m': test_get_m,
+                                                'test_get_k': test_get_k, 'rklst': rklst, 'r': r,
+                                                'first_slau': first_slau, 'dict': dict,
+                                                'p': test_get_p, 'k': test_get_k, 'm': test_get_m, 'n': test_get_n,
+                                                'key_one': key_one, 'key_two': key_two, 'participantsID': participantsss})
+
+
+def openSchemeBd(request):
+    test_get_n = int(request.session['test_get_n'])
+    test_get_p = int(request.session['test_get_p'])
+    test_get_k = int(request.session['test_get_k'])
+    test_get_m = int(request.session['test_get_m'])
+    key_one = request.session['key_one']
+    key_two = request.session['key_two']
+    participantsss = request.session['participantss']
+    list_of_idtfi = request.session['list_of_idtfi']
+    idtf = identifiers(test_get_p, test_get_n)
+    r = identivierdegrees(idtf, test_get_n, test_get_m, test_get_p)
+    Nkm(test_get_k, test_get_m)
+    l = cfind(test_get_k, test_get_m)
+    lc = cfind(test_get_k - 1, test_get_m)
+    R = []
+
+    for i in range(0, int(len(lc))):
+        rc = []
+        rc.append(lc[i])
+        for j in range(0, test_get_m + 1):
+            u = cfn(l, lc[i], j, test_get_k, test_get_m)
+            rc.append(u)
+        R.append(rc)
+    E = LNcreat(l, test_get_k)
+    rklst = ranklst(E)
+    sv = request.session['sv']
+    slay = CVal(R, r, sv, test_get_m)
+    output = []
+    for i in range(0, int(int(len(slay[1])) / test_get_n)):
+        outp = []
+        for j in range(0, test_get_n):
+            outp.append(slay[1][(test_get_n) * i + j])
+        output.append(outp)
+    participants = [1]
+    for i in range(2, test_get_k + 1):
+        participants.append(i)
+    participantsI = list_of_idtfi.split(',')
+    participantsID = [int(item) for item in participantsI]
+    for i in range(0, test_get_k):
+        participantsID.append(idtf[participants[i]])
+    r = identivierdegrees(participantsID, test_get_n, test_get_m, test_get_p)
+    dict = {}
+    for i in range(0, len(participantsI)):
+        prekey = substitution(sv, test_get_p, test_get_k, test_get_m, int(participantsI[i]), r)
+        k = 'Предварительный ключ ' + str(participantsI[i]) + '-го участника'
+        dict[k] = prekey
+    prekey_first = substitution(sv, test_get_p, test_get_k, test_get_m, key_one, r)
+    key_first = finalsubstitution(prekey_first, r, test_get_k - 1, test_get_m, test_get_p)
+    prekey_second = substitution(sv, test_get_p, test_get_k, test_get_m, key_two, r)
+    key_second = finalsubstitution(prekey_second, r, test_get_k - 1, test_get_m, test_get_p)
+    if key_first == key_first:
+        res = 'Совпадение m ключей: True'
+
+
+    compromat = output
+    slau1 = []
+    for i in range(0, int(len(compromat))):
+        for j in range(0, test_get_m + 1):
+            slau1.append(compromat[i][j])
+
+    r = identivierdegreees(idtf, test_get_m, test_get_p)
+    slist1 = slaulist(E, r, rklst,E,slau1,test_get_m)
+    ss = slist1 + []
+    sln = []
+    for i in range(0, int(len(rklst))):
+        for s in range(0, 1 + test_get_m - rklst[i]):
+            for j in range(0, rklst[i]):
+                ss = redusing(ss, R, sln, rklst, i, j, s, test_get_m, test_get_p)
+        gs = gauss(ss[i], test_get_p)
+        for test_get_k in range(0, int(len(gs))):
+            sln.append(gs[test_get_k])
+    slist1 = slaulist(E, r, rklst, E, slau1, test_get_m)
+    first_slau = slist1[:1]
+    second_right_slau = str(slist1[1:2][0])
+    second_slau = request.GET['build_slau']
+    count = 0
+    if second_slau == second_right_slau:
+        res_comp = 'Построена верно, 2-ая СЛАУ: '
+        return render(request, 'BlomScheme1.html',
+                      {'key_first': key_first, 'key_second': key_first, 'prekey_first': prekey_first,
+                       'prekey_second': prekey_second,
+                       'sv': sv, 'res': res, 'test_get_m': test_get_m,
+                       'test_get_k': test_get_k, 'rklst': rklst, 'r': r, 'first_slau': first_slau,
+                       'light_first_slau': first_slau, 'dict': dict, 'slau': slist1, 'second_slau': res_comp, 'second_right_slau': second_right_slau,
+                       'p': test_get_p, 'k': test_get_k, 'm': test_get_m, 'n': test_get_n,
+                       'key_one': key_one, 'key_two': key_two, 'participantsID': participantsss})
+    else:
+        count += 1
+        res_comp = 'Построена неверно. Количество ошибок: ' + str(count)
+        return render(request, 'BlomScheme1.html',
+                      {'key_first': key_first, 'key_second': key_first, 'prekey_first': prekey_first,
+                       'prekey_second': prekey_second,
+                       'sv': sv, 'res': res, 'test_get_m': test_get_m,
+                       'test_get_k': test_get_k, 'rklst': rklst, 'r': r, 'first_slau': first_slau,
+                       'dict': dict, 'second_slau': res_comp,
+                       'p': test_get_p, 'k': test_get_k, 'm': test_get_m, 'n': test_get_n,
+                       'key_one': key_one, 'key_two': key_two, 'participantsID': participantsss})
+
+
+def openScheme(request):
+    test_get_n = int(request.session['test_get_n'])
+    test_get_p = int(request.session['test_get_p'])
+    test_get_k = int(request.session['test_get_k'])
+    test_get_m = int(request.session['test_get_m'])
+    key_one = request.session['key_one']
+    key_two = request.session['key_two']
+    participantsss = request.session['participantss']
+    list_of_idtfi = request.session['list_of_idtfi']
+    idtf = identifiers(test_get_p, test_get_n)
+    r = identivierdegrees(idtf, test_get_n, test_get_m, test_get_p)
+    Nkm(test_get_k, test_get_m)
+    l = cfind(test_get_k, test_get_m)
+    lc = cfind(test_get_k - 1, test_get_m)
+    R = []
+
+    for i in range(0, int(len(lc))):
+        rc = []
+        rc.append(lc[i])
+        for j in range(0, test_get_m + 1):
+            u = cfn(l, lc[i], j, test_get_k, test_get_m)
+            rc.append(u)
+        R.append(rc)
+    E = LNcreat(l, test_get_k)
+    rklst = ranklst(E)
+    sv = request.session['sv']
+    slay = CVal(R, r, sv, test_get_m)
+    output = []
+    for i in range(0, int(int(len(slay[1])) / test_get_n)):
+        outp = []
+        for j in range(0, test_get_n):
+            outp.append(slay[1][(test_get_n) * i + j])
+        output.append(outp)
+    participants = [1]
+    for i in range(2, test_get_k + 1):
+        participants.append(i)
+    participantsI = list_of_idtfi.split(',')
+    participantsID = [int(item) for item in participantsI]
+    for i in range(0, test_get_k):
+        participantsID.append(idtf[participants[i]])
+    r = identivierdegrees(participantsID, test_get_n, test_get_m, test_get_p)
+    dict = {}
+    for i in range(0, len(participantsI)):
+        prekey = substitution(sv, test_get_p, test_get_k, test_get_m, int(participantsI[i]), r)
+        k = 'Предварительный ключ ' + str(participantsI[i]) + '-го участника'
+        dict[k] = prekey
+    prekey_first = substitution(sv, test_get_p, test_get_k, test_get_m, key_one, r)
+    key_first = finalsubstitution(prekey_first, r, test_get_k - 1, test_get_m, test_get_p)
+    prekey_second = substitution(sv, test_get_p, test_get_k, test_get_m, key_two, r)
+    key_second = finalsubstitution(prekey_second, r, test_get_k - 1, test_get_m, test_get_p)
+    if key_first == key_first:
+        res = 'Совпадение m ключей: True'
+
+
+    compromat = output
+    slau1 = []
+    for i in range(0, int(len(compromat))):
+        for j in range(0, test_get_m + 1):
+            slau1.append(compromat[i][j])
+
+    r = identivierdegreees(idtf, test_get_m, test_get_p)
+    slist1 = slaulist(E, r, rklst,E,slau1,test_get_m)
+    ss = slist1 + []
+    sln = []
+    for i in range(0, int(len(rklst))):
+        for s in range(0, 1 + test_get_m - rklst[i]):
+            for j in range(0, rklst[i]):
+                ss = redusing(ss, R, sln, rklst, i, j, s, test_get_m, test_get_p)
+        gs = gauss(ss[i], test_get_p)
+        for test_get_k in range(0, int(len(gs))):
+            sln.append(gs[test_get_k])
+    slist1 = slaulist(E, r, rklst, E, slau1, test_get_m)
+    second_right_slau = str(slist1[1:2][0])
+    slist2 = slaulist(E, r, rklst, E, slau1, test_get_m)
+    first_slau = slist1[:1]
+    for i in range(len(slist2[1:2][0])):
+        p = int(slist2[1:2][0][i][0] - sv[1])
+        if p < 0:
+            slist2[1:2][0][i][0] = p + 127
+            del slist2[1:2][0][i][1]
+        else:
+            slist2[1:2][0][i][0] = p
+            del slist2[1:2][0][i][1]
+    second_light_right_slau = str(slist2[1:2][0])
+    second_light_slau = request.GET['result_slau']
+    count1 = 0
     if sv == sv:
         resule = 'True'
     else:
         resule = 'False'
-    return render(request, 'BlomScheme1.html', {'key_first': key_first, 'key_second': key_second, 'prekey_first': dict,
-                                                'prekey_second': prekey_second,
-                                                'sv': sv, 'res': res, 'test_get_m': test_get_m,
-                                                'test_get_k': test_get_k, 'rklst': rklst, 'r': r,
-                                                'slau1': slau1, 'resul': sv, 'resule': resule})
+    if second_light_slau == second_light_right_slau:
+        res_fin = 'Построена верно, 2-ая упрощенная СЛАУ: '
+        return render(request, 'BlomScheme1.html', {'key_first': key_first, 'key_second': key_first, 'prekey_first': prekey_first,
+                                                    'prekey_second': prekey_second, 'second_right_slau': second_right_slau,
+                                                    'sv': sv, 'res': res, 'test_get_m': test_get_m,
+                                                    'test_get_k': test_get_k, 'rklst': rklst, 'r': r,
+                                                    'slau1': slau1, 'resul': sv, 'resule': resule,
+                                                    'light_first_slau': first_slau, 'dict': dict, 'slau': slist1,
+                                                    'first_slau': first_slau, 'second_light_slau': res_fin,
+                                                    'second_light_right_slau': second_light_right_slau, 'p': test_get_p,
+                                                    'k': test_get_k, 'm': test_get_m, 'n': test_get_n,
+                                                    'key_one': key_one, 'key_two': key_two, 'participantsID': participantsss})
+    else:
+        count1 += 1
+        res_fin = 'Построена неверно. Количество ошибок: ' + str(count1)
+        return render(request, 'BlomScheme1.html',
+                      {'key_first': key_first, 'key_second': key_first, 'prekey_first': prekey_first,
+                       'prekey_second': prekey_second, 'second_right_slau': second_right_slau,
+                       'sv': sv, 'res': res, 'test_get_m': test_get_m,
+                       'test_get_k': test_get_k, 'rklst': rklst, 'r': r,
+                       'slau1': slau1, 'light_first_slau': first_slau, 'dict': dict, 'slau': slist1,
+                       'first_slau': first_slau, 'second_light_slau': res_fin,
+                       'p': test_get_p, 'k': test_get_k, 'm': test_get_m, 'n': test_get_n,
+                       'key_one': key_one, 'key_two': key_two, 'participantsID': participantsss})
 
 
 """

@@ -542,10 +542,27 @@ for i in range(0, int(len(rklst))):
     # print "gs",gs
     for k in range(0, int(len(gs))):
         sln.append(gs[k])
-        # print sln
+        # print(sln)
 print("Коэффициенты искомого многочлена F(X_1,...,X_2) (имя списка sln):")
 print("Коэффициенты перечислены в порядке возрастания степеней мономов в однородных многочленах симметричного многочлена.")
 print(sln)
 print ("Коэффициенты исходного многочлена F(X_1,...,X_k) восстановлены верно")
 print (sv==sln)
-
+slist1 = slaulist(E, r, rklst)
+print(slist1)
+print(slist1[1:2])
+print(type(slist1[1:2][0]))
+print(slist1[1:2][0])
+print(sv[1])
+print(type(sv[1]))
+for i in range(len(slist1[1:2][0])):
+    # for j in range(len(slist1[1:2][0][0])):
+    p = int(slist1[1:2][0][i][0] - sv[1])
+    if p < 0:
+        slist1[1:2][0][i][0] = p + 127
+        del slist1[1:2][0][i][1]
+    else:
+        slist1[1:2][0][i][0] = p
+        del slist1[1:2][0][i][1]
+print(slist1[1:2][0])
+print(type(slist1[1:2][0]))
