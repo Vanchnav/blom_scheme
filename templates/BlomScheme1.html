@@ -1,73 +1,196 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
+
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="author" content="Национальный исследовательский университет Московский Энергетический Институт">
+    <title>
+        Схема Блома
+    </title>
+    {% load static %}
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap-responsive.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/default.css' %}" rel="stylesheet">
+    <link rel="shortcut icon" href="/assets/ico/favicon.ico">
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
 </head>
+
 <body>
-    <div style="overflow: auto; width:auto; height:auto; position: relative; background-color: #FA8072; color: #8B0000  ">{{alert1}}</div>
-    <h3>1. Генерация схемы предварительного распределения ключей</h3>
-    <form name="Gen" style="position: relative" action="{% url 'generate' %}">
-        <p>p:
-            <input type="text" size="25" style="margin-left:5px" name="p_input" id="p">
-        </p>
-        <p>k:
-            <input type="text" size="25" style="margin-left:5px" name="k_input" id="k">
-        </p>
-        <p>m:
-            <input type="text" size="25" style="margin-left:2px" name="m_input" id="m">
-        </p>
-        <p>n:
-            <input type="text" size="25" style="margin-left:5px" name="n_input" id="n">
-        </p>
-        <p>
-            Исходный многочлен и параметры:
-        </p>
-        <div style="overflow: auto; width:300px; height:auto; border: 1px solid black; position: relative">p = {{p}}, k = {{k}}, m = {{m}}, n = {{n}}<br>Исходный многочлен = {{sv}}</div><br>
-        <input type="submit" name="generate_button" value="Генерировать">
-    </form>
-    <h3>2. Вычисление ключа конференц-связи</h3>
-    <form name="Calcul" style="position: relative" action="{% url 'get' %}">
-        <p>Идентификаторы участников конференц-связи:<br><br>
-            <input type="text" size="25" style="margin-left:5px" name="participantsID">
-        </p>
-        <p>Вычисление ключа
-            <input type="text" size="1" style="margin-left:5px; margin-right:5px" name="key_first">участника
-        </p>
-        <div style="overflow: auto; width:300px; height:auto; border: 1px solid black; position: relative">Предварительный ключ {{key_one}}-го участника = {{prekey_first}}<br>Ключ = {{key_first}}</div>
-        <p>Вычисление ключа
-            <input type="text" size="1" style="margin-left:5px; margin-right:5px" name="key_second">участника
-        </p>
-        <div style="overflow: auto; width:300px; height:auto; border: 1px solid black; position: relative">Предварительный ключ {{key_two}}-го участника ={{prekey_second}}<br>Ключ = {{key_second}}</div><br>
-        <input type="submit" name="calculate" value="Вычислить">
-        <div style="overflow: auto; width:300px; height:auto; border: 1px solid black; position: relative; margin-top:15px">Идентификаторы = {{participantsID}}<br>{{res}}</div><br>
-    </form>
-    <h3>3. Вскрытие схемы Блома</h3>
-    <form name="OpenOb" style="position: relative" action="{% url 'openob' %}">
-        <p>Список идентификаторов
-            <input type="text" size="10" style="margin-left:5px; margin-right:5px" name="list_of_idtf"><input type="submit" name="update" value="Обновить">
-        </p>
-        <p>Список списков скомпрометированных многочленов:</p>
-        <div style="overflow: auto; width:600px; height:auto; border: 1px solid black; position: relative">{{dict}}</div><br>
-    </form>
-    <form name="OpenScr" style="position: relative" action="{% url 'openscr' %}">
-        <input type="submit" name="opening" value="Вскрыть">
-        <div style="overflow: auto; width:600px; height:auto; border: 1px solid black; position: relative; margin-top:15px">Степень многочлена F(X_1,...,X_k) по каждой переменной m = {{test_get_m}}<br>Число участников привилегерованной группы k = {{test_get_k}}<br>
-            Список рангов частичных СЛАУ: {{rklst}}<br>Таблица r степеней индентификаторов m+1 участников: r= {{r}}<br>Построенная 1-ая СЛАУ: {{first_slau}}</div><br>
-    </form>
-    <form name="OpenScr" style="position: relative" action="{% url 'openbd' %}">
-        <p>Постройте 2-ую СЛАУ:
-            <input type="text" size="46" style="margin-left:5px; margin-right:5px" name="build_slau"><br><br>{{second_slau}}{{second_right_slau}}<br><br><input type="submit" name="build" value="Построить">
-        </p>
-        <div style="overflow: auto; width:600px; height:auto; border: 1px solid black; position: relative; margin-top:15px">Построенная система СЛАУ: {{slau}}<br>Упрощенная 1-ая СЛАУ: {{light_first_slau}}<br></div><br>
-    </form>
-    <form name="Open" style="position: relative" action="{% url 'open' %}">
-        <p>Постройте 2-ую упрощенную СЛАУ:
-            <input type="text" size="46" style="margin-left:5px; margin-right:5px" name="result_slau"><br><br>{{second_light_slau}}{{second_light_right_slau}}<br><br><input type="submit" name="result" value="Результат">
-        </p>
-        <div style="overflow: auto; width:600px; height:auto; border: 1px solid black; position: relative; margin-top:15px">Коэффициенты исходного многочлена:{{resul}}<br>
-            Восстановленные коэффициенты: {{resul}}<br>Коэффициенты исходного многочлена F(X_1,...,X_k) восстановлены верно: {{resule}}
-        </div><br>
-    </form>
+    <div class="navbar">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <a class="brand" href="/aal">
+                    Алгебраический процессор
+                </a>
+                <div class="nav-collapse collapse">
+                    <ul class="nav">
+                        <li  class="active" >
+                            <a href="/django/BlomScheme/1">
+                                Схема Блома
+                            </a>
+                        </li>
+                        <li><a href="#myModal" data-toggle="modal">
+                                Справка
+                            </a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" name="csrfmiddlewaretoken" value="pwRqZfTaYzaysJp6Cr6zjVwMuWlc7ynDIIKEFfzullSAg0mCGaiVXNnL6spSl1sx">
+    <input type="hidden" name="sv" value="[120, 535, 401, 129, 234, 568, 17, 135, 800, 162]">
+    <input type="hidden" name="output" value="[[42, 16, 54, 41, 116, 37, 70], [84, 109, 77, 90, 123, 24, 22], [126, 95, 28, 26, 63, 113, 23], [92, 87, 70, 124, 78, 15, 18]]">
+    <input type="hidden" name="solSLAU" value="[[[22, 1, 1, 1, 1], [109, 1, 2, 4, 8], [125, 1, 3, 9, 27], [33, 1, 4, 16, 64]], [[61, 1, 2, 4, 8], [38, 1, 3, 9, 27], [79, 1, 4, 16, 64]], [[9, 1, 3, 9, 27], [82, 1, 4, 16, 64]], [[33, 1, 4, 16, 64]], [[63, 1, 2, 4, 8], [60, 1, 3, 9, 27], [89, 1, 4, 16, 64]], [[71, 1, 3, 9, 27], [120, 1, 4, 16, 64]], [[50, 1, 4, 16, 64]], [[96, 1, 3, 9, 27], [91, 1, 4, 16, 64]], [[67, 1, 4, 16, 64]], [[14, 1, 4, 16, 64]], [[110, 1, 2, 4, 8], [12, 1, 3, 9, 27], [78, 1, 4, 16, 64]], [[52, 1, 3, 9, 27], [2, 1, 4, 16, 64]], [[19, 1, 4, 16, 64]], [[84, 1, 3, 9, 27], [53, 1, 4, 16, 64]], [[3, 1, 4, 16, 64]], [[69, 1, 4, 16, 64]], [[126, 1, 3, 9, 27], [111, 1, 4, 16, 64]], [[43, 1, 4, 16, 64]], [[109, 1, 4, 16, 64]], [[106, 1, 4, 16, 64]]]">
+    <input type="hidden" name="solReducedSLAU" value="[[[22, 1, 1, 1, 1], [109, 1, 2, 4, 8], [125, 1, 3, 9, 27], [33, 1, 4, 16, 64]], [[20, 2, 4, 8], [124, 3, 9, 27], [38, 4, 16, 64]], [[43, 9, 27], [22, 16, 64]], [[100, 64]], [[30, 2, 4, 8], [27, 3, 9, 27], [56, 4, 16, 64]], [[14, 9, 27], [33, 16, 64]], [[55, 64]], [[13, 9, 27], [60, 16, 64]], [[65, 64]], [[88, 64]], [[50, 2, 4, 8], [79, 3, 9, 27], [18, 4, 16, 64]], [[3, 9, 27], [116, 16, 64]], [[55, 64]], [[102, 9, 27], [102, 16, 64]], [[18, 64]], [[86, 64]], [[104, 9, 27], [121, 16, 64]], [[8, 64]], [[87, 64]], [[14, 64]]]">
+    <input type="hidden" name="solSolution" value="[28, 41, 65, 15, 33, 94, 106, 112, 16, 73, 60, 30, 69, 75, 79, 110, 118, 27, 3, 49, 101, 91, 126, 96, 81, 110, 95, 85, 36, 45, 35, 11, 16, 47, 28]">
+    <input type="hidden" name="testedKeys" value="[]">
+    <input type="hidden" name="errorCount" value="0">
+    <div class="container-fluid">
+        
+        <div style="overflow: auto; width:auto; height:auto; position: relative; background-color: #FA8072; color: #8B0000  ">{{alert1}}</div>
+        <div class="row-fluid">
+            <div class="span6 tablet-span12">
+                <h5>1. Генерация схемы предварительного распределения ключей</h5>
+                <div class="row-fluid">
+                    <form name="Gen" style="position: relative" action="{% url 'generate' %}">
+                        <div class="span6">
+                            <div class="input-prepend" title="p – характеристика поля (простое число)">
+                                <span class="add-on">p=</span>
+                                <input class="span10" name="p_input" type="number" min="1" value="">
+                            </div>
+                            <div class="input-prepend" title="k">
+                                <span class="add-on">k=</span>
+                                <input class="span10" name="k_input" type="number" min="2" value="">
+                            </div>
+                            <div class="input-prepend" title="m">
+                                <span class="add-on">m=</span>
+                                <input class="span10" name="m_input" type="number" value="">
+                            </div>
+                            <div class="input-prepend" title="n">
+                                <span class="add-on">n=</span>
+                                <input class="span10" name="n_input" type="number" value="">
+                            </div>
+                        </div>
+                        <div class="span6">
+                            <textarea readonly="readonly" class="span12" name="rtxtGen" rows="5">p = {{p}}, k = {{k}}, m = {{m}}, n = {{n}} 
+Исходный многочлен = {{sv}}</textarea>
+                            <input type="submit" name="generate_button" value="ГЕНЕРИРОВАТЬ" class="but gen_button">
+                        </div>
+                    </form>
+                </div>
+                <h5>2. Вычисление ключа конференц-связи</h5>
+                <form name="Calcul" style="position: relative" action="{% url 'get' %}">
+                    <div>Идентификаторы участников конференц-связи<br />
+                        <input class="span8" name="participantsID" type="text" value=""><br />
+                        Вычисление ключа <input class="span2" name="key_first" type="text" value=""> участником<br />
+                        <textarea readonly="readonly" class="span12" name="rtxtI" rows="5">Предварительный ключ {{key_one}}-го участника = {{prekey_first}}
+Ключ = {{key_first}}</textarea><br />
+    
+                        Вычисление ключа <input class="span2" name="key_second" type="text" value=""> участником<br />
+                        <textarea readonly="readonly" class="span12" name="rtxtJ" rows="5">Предварительный ключ {{key_second}}-го участника = {{prekey_second}}
+Ключ = {{key_second}}</textarea><br />
+                        <input type="submit" name="calculate" value="ВЫЧИСЛИТЬ" class="but calculate_button"><br /><br>
+                        <textarea readonly="readonly" class="span12" name="rtxtKeyResult"
+                            rows="5">Идентификаторы = {{participantsID}}
+{{res}}</textarea><br />
+                    </div>
+                </form>
+            </div>
+            <div class="span6 tablet-span12">
+                <h5>3. Вскрытие схемы Блома</h5>
+                <form name="OpenOb" style="position: relative" action="{% url 'openob' %}">
+                    <div class="row-fluid">
+                        <label class="span4" for="list_of_idtf" style="padding-top: 5px;">Список
+                            идентификаторов</label>
+                        <div class="input-append span8">
+                            <input class="span8" name="list_of_idtf" type="text" value="">
+                            <input type="submit" name="update" value="ОБНОВИТЬ" class="obn_button">
+                        </div>
+    
+                    </div>
+                    Список списков скомпрометированных многочленов:<br />
+                    <textarea class="span12" name="rtxtCoeff" rows="5">{{dict}}</textarea>
+                </form>
+                <form name="OpenScr" style="position: relative" action="{% url 'openscr' %}">
+                    <input type="submit" name="opening" value="ВСКРЫТЬ" class="vskr_button"><br /><br>
+                    <textarea readonly="readonly" class="span12" name="rtxtSolResult"
+                        rows="5">Степень многочлена F(X_1,...,X_k) по каждой переменной m = {{test_get_m}}
+Число участников привилегерованной группы k = {{test_get_k}}
+Список рангов частичных СЛАУ: {{rklst}}
+Таблица r степеней индентификаторов m+1 участников: r= {{r}}
+Построенная 1-ая СЛАУ: {{first_slau}}</textarea>
+                </form>
+                <form name="OpenScr" style="position: relative" action="{% url 'openbd' %}">
+                    <div class="control-group ">Постройте 2-ую СЛАУ <input type="text" size="46" style="margin-left:5px; margin-right:5px" name="build_slau"></div>
+                    <input type="submit" name="build" value="ПОСТРОЕННАЯ СЛАУ" class="build_button"> {{second_slau}}{{second_right_slau}}<br><br>
+                    <textarea readonly="readonly" class="span12" name="rtxtSolSLAU"
+                        rows="5">Построенная система СЛАУ: {{slau}}
+Упрощенная 1-ая СЛАУ: {{light_first_slau}}</textarea><br />
+                </form>
+                <form name="Open" style="position: relative" action="{% url 'open' %}">
+                    <div class="control-group ">Постройте 2-ую упрощенную СЛАУ <input type="text" size="46" style="margin-left:5px; margin-right:5px" name="result_slau"></div>
+                    <input type="submit" name="result" value="Результат" class="result_button">{{second_light_slau}}{{second_light_right_slau}}<br><br>
+                    <textarea readonly="readonly" class="span12" name="rtxtSolution"
+                        rows="5">Коэффициенты исходного многочлена: {{resul}}
+Восстановленные коэффициенты: {{resul}}
+Коэффициенты исходного многочлена F(X_1,...,X_k) восстановлены верно: {{resule}}</textarea><br />
+                </form>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <footer>
+        <small class="muted">
+            © Национальный Исследовательский Университет «Московский Энергетический Институт»
+        </small>
+    </footer>
+    <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+        aria-hidden="true">
+        <div class="modal-header">
+            <button type="submit" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 id="myModalLabel">
+                О программе
+            </h4>
+        </div>
+        <div class="modal-body">
+            <p class="text-center">
+                ФГБОУ ВО "НИУ "МЭИ"
+            </p>
+            <p class="text-center">
+                Институт ИВТ
+            </p>
+            <p class="text-center">
+                Кафедра МКМ
+            </p>
+            <h5 class="text-center">
+                Схема Блома
+            </h5><br />
+            <p class="text-right">
+                Разработчик программы: Давыдова Наталья Артемовна
+            </p>
+            <p class="text-right">
+                Разработчик интерфейса: Чуднов Иван Ильич
+            </p>
+            <p class="text-right">
+                Руководитель: проф. Фролов Александр Борисович
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">
+                Закрыть
+            </button>
+        </div>
+    </div>
 </body>
+
 </html>

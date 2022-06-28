@@ -747,10 +747,10 @@ def openSchemeOb(request):
         return render(request, 'BlomScheme1.html', {'p': test_get_p, 'k': test_get_k, 'm': test_get_m, 'n': test_get_n,
                                                     'key_one': key_one, 'key_two': key_two, 'sv': sv,
                                                     'alert1': 'Ошибка: Заполните список идентификаторов'})
-    elif len(request.GET['list_of_idtf'].split(',')) > (test_get_n) or len(request.GET['list_of_idtf'].split(',')) <= len(participantsss.split(',')):
+    elif len(request.GET['list_of_idtf'].split(',')) > (test_get_n) or len(request.GET['list_of_idtf'].split(',')) < len(participantsss.split(',')):
         return render(request, 'BlomScheme1.html', {'p': test_get_p, 'k': test_get_k, 'm': test_get_m, 'n': test_get_n,
                                                     'key_one': key_one, 'key_two': key_two, 'sv': sv,
-                                                    'alert1': 'Ошибка: Список идентификаторов должен быть не меньше введенного во втором пункте списка, но не более n'})
+                                                    'alert1': 'Ошибка: Для вскрытия должно быть не меньше m+1 участников, но не более n'})
     elif list(set(request.GET['list_of_idtf'].split(',')) - set(list_of_n)) != []:
         return render(request, 'BlomScheme1.html', {'p': test_get_p, 'k': test_get_k, 'm': test_get_m, 'n': test_get_n,
                                                     'key_one': key_one, 'key_two': key_two, 'sv': sv,
